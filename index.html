@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <h2>List Users</h2>
+      <ul id="list"></ul>
+    </div>
+    <div>
+      <div>
+        <label>Avatar</label>
+        <input type="text" name="avatar" />
+      </div>
+      <div>
+        <label>Firstname</label>
+        <input type="text" name="first_name" />
+      </div>
+      <div>
+        <label>Lastname</label>
+        <input type="text" name="last_name" />
+      </div>
+      <div>
+        <label>Email</label>
+        <input type="email" name="email" />
+      </div>
+      <div>
+        <button id="submit">Submit</button>
+        <button id="updateForm">Update</button>
+        <div class="idUpdate"></div>
+      </div>
+    </div>
+  </body>
+  <script>
+    //  var listUsersBlock = document.querySelector(".list");
+
+    var userAPI = "http://localhost:3000/data";
+    function start() {
+      getUsers(
+        function (users) {
+          renderUsers(users);
+        }
+
+        //   c2:  renderUsers;
+        // renderUsers
+      );
+
+      handleCreateForm();
+    }
+    start();
+
+    //Fuctions
+    function getUsers(callback) {
+      fetch(userAPI)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(callback);
+    }
+    function createUser(data, callback) {
+      var options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(data),
+      };
+      fetch(userAPI, options)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(callback);
+    }
+    function renderUsers(users) {
+      var listUsersBlock = document.querySelector("#list");
+      var htmls = users.map((user) => {
+        return `
+                    <li class="user-item-${user.id}">
+                        <img src="${user.avatar}" alt="user avatar"/>
+                        <h3>${user.first_name} ${user.last_name}</h3>
+                          <b>Email: ${user.email}</b>
+                          <button id="delete" onclick="handleDeleteUser(${user.id})">Delete</button>
+                          <button id="update"  onclick="moveFormUpdate(${user.id})">Update</button>
+
+                    </li>
+                `;
+      });
+      listUsersBlock.innerHTML = htmls.join("");
+    }
+    function handleCreateForm() {
+      var btnSubmit = document.querySelector("#submit");
+      btnSubmit.onclick = function () {
+        var avatar = document.querySelector("input[name='avatar']");
+        var first_name = document.querySelector("input[name='first_name']");
+        var last_name = document.querySelector("input[name='last_name']");
+        var email = document.querySelector("input[name='email']");
+
+        var formData = {
+          avatar: avatar.value,
+          first_name: first_name.value,
+          last_name: last_name.value,
+          email: email.value,
+        };
+        createUser(formData, function () {
+          getUsers(renderUsers);
+        });
+      };
+    }
+
+    // Handle Delete
+    function handleDeleteUser(id) {
+      var options = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      fetch(userAPI + "/" + id, options)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function () {
+          var userItem = document.querySelector(`user-item-${user.id}`);
+          if (userItem) {
+            userItem.remove();
+          }
+        });
+    }
+
+    // Handle Update
+    function moveFormUpdate(id) {
+      // Moving to update form
+
+      // *****************
+      var avatar = document.querySelector("input[name='avatar']");
+      var first_name = document.querySelector("input[name='first_name']");
+      var last_name = document.querySelector("input[name='last_name']");
+      var email = document.querySelector("input[name='email']");
+      fetch(userAPI + "/" + id)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (user) {
+          avatar.value = user.avatar;
+          first_name.value = user.first_name;
+          last_name.value = user.last_name;
+          email.value = user.email;
+          document.querySelector(".idUpdate").innerHTML = user.id;
+        });
+    }
+
+    var btnUpdateForm = document.querySelector("#updateForm");
+
+    btnUpdateForm.onclick = handleUpdateUser;
+    function handleUpdateUser() {
+      var avatar = document.querySelector("input[name='avatar']");
+      var first_name = document.querySelector("input[name='first_name']");
+      var last_name = document.querySelector("input[name='last_name']");
+      var email = document.querySelector("input[name='email']");
+
+      var valueIdUpdate = document.querySelector(".idUpdate").innerHTML;
+
+      var formDataUpdate = {
+        avatar: avatar.value,
+        first_name: first_name.value,
+        last_name: last_name.value,
+        email: email.value,
+      };
+
+      console.log(formDataUpdate);
+      console.log(valueIdUpdate);
+
+      var options = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(formDataUpdate),
+      };
+      fetch(userAPI + "/" + valueIdUpdate, options)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function () {
+          getUsers(renderUsers);
+        });
+
+      // document.querySelector(".idUpdate").innerHTML = "";
+    }
+  </script>
+</html>
