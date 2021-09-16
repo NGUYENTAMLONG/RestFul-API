@@ -1,11 +1,11 @@
 {
   "data": [
     {
-      "id": 7,
-      "email": "michael.lawson@reqres.in",
-      "first_name": "Michael",
+      "avatar": "https://reqres.in/img/faces/7-image.jpg",
+      "first_name": "Michael 112",
       "last_name": "Lawson",
-      "avatar": "https://reqres.in/img/faces/7-image.jpg"
+      "email": "michael.lawson@reqres.in",
+      "id": 7
     },
     {
       "id": 8,
@@ -34,6 +34,13 @@
       "last_name": "Nguyễn Tam",
       "email": "sdafdsaf",
       "id": 13
+    },
+    {
+      "avatar": "https://reqres.in/img/faces/9-image.jpg",
+      "first_name": "Charlie",
+      "last_name": "Mungger",
+      "email": "hien18101966@gmail.com",
+      "id": 14
     }
   ]
 }
